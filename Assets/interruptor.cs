@@ -1,9 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LightSwitch : MonoBehaviour
 {
-    [SerializeField] private Light pointLight; // Asigna la luz en el Inspector
-    [SerializeField] private KeyCode switchKey = KeyCode.E; // Tecla para activar
+    [SerializeField] private Light[] pointLights;
+    [SerializeField] private KeyCode switchKey = KeyCode.E;
+    [SerializeField] private AudioSource switchSound; // ← Referencia al AudioSource
 
     private bool isInRange = false;
 
@@ -11,11 +12,27 @@ public class LightSwitch : MonoBehaviour
     {
         if (isInRange && Input.GetKeyDown(switchKey))
         {
-            pointLight.enabled = !pointLight.enabled; // Cambia el estado de la luz
+            ToggleLights();
         }
     }
 
-    // Detectar si el jugador est� cerca
+    private void ToggleLights()
+    {
+        foreach (Light light in pointLights)
+        {
+            if (light != null)
+            {
+                light.enabled = !light.enabled;
+            }
+        }
+
+        // Reproducir el sonido
+        if (switchSound != null)
+        {
+            switchSound.Play();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
